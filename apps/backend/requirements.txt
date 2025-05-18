@@ -4,3 +4,4 @@ pydantic==2.6.3
 black==24.3.0
 flake8==7.0.0
 flake8-pyproject==1.2.3
+sqlmodel==0.0.22

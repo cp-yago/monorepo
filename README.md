@@ -58,6 +58,34 @@ The backend is a FastAPI application. It includes:
 - CORS middleware configured for the frontend
 - Interactive API documentation with Swagger UI
 
+#### Installing Backend Dependencies
+
+To add a new dependency to the backend:
+
+1. Enter the virtual environment:
+
+   ```bash
+   cd apps/backend
+   source venv/bin/activate
+   ```
+
+2. Install the new dependency:
+
+   ```bash
+   pip install dependency==x.y.z
+   ```
+
+3. Add the dependency to requirements.txt:
+
+   ```bash
+   pip freeze | grep dependency >> requirements.txt
+   ```
+
+4. When done, exit the virtual environment:
+   ```bash
+   deactivate
+   ```
+
 ## License
 
 This project is open source and available under the MIT license.
