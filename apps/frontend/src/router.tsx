@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
-import { About } from './about'
+import { Form } from './form'
 import { Home } from './home'
 
 export function Router() {
@@ -7,7 +7,7 @@ export function Router() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/form" element={<Form />} />
       </Routes>
     </BrowserRouter>
   )

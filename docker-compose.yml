@@ -23,3 +23,20 @@ services:
       - ./apps/backend:/app
     environment:
       - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/pgdatabase
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=pgdatabase
+
+volumes:
+  postgres_data:
