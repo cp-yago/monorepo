@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.core.database import create_db_and_tables
 from app.api.users import router as users_router
+from app.api.todo import router as todos_router
 
 
 @asynccontextmanager
@@ -24,6 +25,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(users_router, prefix="/api", tags=["users"])
+app.include_router(todos_router, prefix="/api", tags=["todos"])
 
 
 @app.get("/api/health")
