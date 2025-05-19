@@ -1,16 +1,8 @@
-import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlmodel import SQLModel, create_engine
 from contextlib import asynccontextmanager
-
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
-
-engine = create_engine(DATABASE_URL)
-
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+from app.core.database import create_db_and_tables
+from app.api.users import router as users_router
 
 
 @asynccontextmanager
@@ -21,6 +13,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Backend API", lifespan=lifespan)
 
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -29,10 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/")
-async def root():
-    return {"message": "Hello from FastAPI"}
+# Include routers
+app.include_router(users_router, prefix="/api", tags=["users"])
 
 
 @app.get("/api/health")
