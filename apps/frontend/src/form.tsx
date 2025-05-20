@@ -8,41 +8,50 @@ interface Todo {
   done: boolean
 }
 
-// const todos: Todo[] = [
-//   { id: 1, description: "Item 1", done: false },
-//   { id: 2, description: "Item 2", done: false },
-//   { id: 3, description: "Item 3", done: false },
-//   { id: 4, description: "Item 4", done: true },
-// ]
-
-function TodoItem({ description }: { description: string }) {
-  return (
-    <li className="my-2">
-      <span>{description}</span>
-      <Button className="mx-2">Complete</Button>
-    </li>
-  )
-}
-
 async function fetchTodos(): Promise<Todo[]> {
   const todoList = await fetch("http://localhost:8000/api/todos").then(response => response.json())
   return todoList
 }
 
 async function createTodo(description: string): Promise<void> {
-  fetch("http://localhost:8000/api/todos", {
+  return fetch("http://localhost:8000/api/todos", {
     method: "POST", body: JSON.stringify({ description }), headers: {
       "Content-Type": "application/json"
     }
   }).then(response => console.log(response))
 }
 
+
+async function updateTodo(todoId: number, body: Todo): Promise<void> {
+  return fetch(`http://localhost:8000/api/todos/${todoId}`, {
+    method: "PUT", body: JSON.stringify(body), headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => console.log(response))
+}
+
+function TodoItem({ todo, onUpdate }: { todo: Todo, onUpdate: () => Promise<void> }) {
+  const handleUpdateTodo = (todoId: number) => {
+    updateTodo(todoId, {
+      ...todo,
+      done: true
+    }).then(() => onUpdate())
+  }
+
+  return (
+    <li className="my-2">
+      <span>{todo.description}</span>
+      <Button className="mx-2" onClick={() => handleUpdateTodo(todo.id)}>Complete</Button>
+    </li>
+  )
+}
+
 export function Form() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [inputValue, setInputValue] = useState("")
 
-  function refreshTodos() {
-    fetchTodos().then(response => setTodos(response))
+  function refreshTodos(): Promise<void> {
+    return fetchTodos().then(response => setTodos(response))
   }
 
   useEffect(() => {
@@ -51,9 +60,12 @@ export function Form() {
 
   const handleCreateTodo = async () => {
     await createTodo(inputValue)
+    await refreshTodos()
     setInputValue("")
-    refreshTodos()
   }
+
+  const todoList = todos.filter(todos => !todos.done)
+  const doneList = todos.filter(todos => todos.done)
 
   return (
     <div className="px-120 py-10">
@@ -65,15 +77,17 @@ export function Form() {
         <div>
           <h1>To-do List</h1>
           <ul className="gap-2">
-            {todos.map(todo => (
-              <TodoItem key={todo.id} description={todo.description} />
+            {todoList.map(todo => (
+              <TodoItem key={todo.id} todo={todo} onUpdate={refreshTodos} />
             ))}
           </ul>
         </div>
         <div>
           <h1>Completed</h1>
           <ul>
-            <TodoItem description="Buy Shampoo" />
+            {doneList.map(todo => (
+              <TodoItem todo={todo} onUpdate={refreshTodos} />
+            ))}
           </ul>
         </div>
       </div>

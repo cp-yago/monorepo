@@ -12,6 +12,5 @@ class TodoResponse(TodoBase):
 
 
 class TodoUpdate(BaseModel):
-    id: int
     description: str
     done: bool
